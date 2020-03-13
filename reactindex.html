@@ -1,0 +1,206 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Todo CSS</title>
+
+    <style>
+		.list{
+			width: 380px;
+		}
+		.finished{
+			text-decoration: line-through;
+		}
+		
+	</style>
+    <script src="reate/react.js"></script>
+    <script src="reate/react-dom.js"></script>
+    <script src="reate/browser.js"></script>
+</head>
+
+<body>
+    <div id="xianshi"></div>
+
+	<script type="text/babel">
+	var data = [
+		{title:"学习ES6新语法", finished:false},
+		{title:"学习Spring Boot", finished:false},
+		{title:"背诵单词", finished:true}
+	];
+	var TodoHeader = React.createClass({
+		addtodo:function(){
+			if(!this.refs.addt.value)
+				return;
+			this.props.thAdd({
+				title:this.refs.addt.value,
+				finished:false
+			});
+			this.refs.addt.value="";
+		},
+		render:function(){
+			return	(
+				<div>
+					<input ref="addt" />
+					<button  onClick={this.addtodo}>添加</button>
+				</div>
+			);
+		}
+	});
+
+	var status=1;
+	
+	var TodoBtn = React.createClass({
+		render: function () {
+                return (
+                    <div>
+                        <button type="button" onClick={this.All}>所有</button>
+						<button type="button" onClick={this.FalseAll}>未完成</button>
+						<button type="button" onClick={this.TrueAll}>已完成</button>
+                    </div>
+                );
+
+            }
+	});
+
+
+
+	var TodoList = React.createClass({
+		ontLremove:function(item){
+			this.props.tLremove(item);
+		},
+		StatusChange:function(item){
+			item.finished = !item.finished;
+			this.props.onStatusChange(item);
+		},
+
+		/*All: function () {
+			status=1;
+			console.info(status);
+
+		},
+
+		FalseAll: function () {
+			status=2;
+			console.info(status);
+
+		},
+		TrueAll: function () {
+			status=3;
+			console.info(status);
+		},
+		
+			
+			var btnArr=[];
+			if(status==1){
+
+				btnArr=this.props.list;
+
+			}else if(status==2){
+				
+				this.props.list.map((item, index) => {
+					if(!item.finished){
+						btnArr.push(item);
+					}
+
+				})
+
+			}else if(status==3){
+
+				this.props.list.map((item, index) => {
+
+					if(item.finished){
+						btnArr.push(item);
+					}
+
+				})
+
+			}		
+		*/	
+		render:function(){
+			var dq = this;
+			return (
+				<table className="list">
+					<thead><tr><th>完成</th><th>待办事项</th><th>删除</th></tr></thead>
+					<tbody>
+
+					{this.props.list.map(function(item,index){
+						return (
+						<tr key={index}>
+							<td><input type="checkbox" checked={item.finished} onChange={()=>dq.StatusChange(item)} /></td>
+							<td className={item.finished ? 'finished':''} >{item.title}</td>
+							<td><button onClick={()=>dq.ontLremove(item)} >删除</button></td>
+						</tr>
+						)
+					}
+					)}
+						<tr>
+							
+						</tr>
+					</tbody>
+					
+					
+				</table>
+				
+			);
+			
+		}
+	});
+
+
+
+	var App = React.createClass({
+		getInitialState:function(){
+			return {
+				list:data
+			}
+		},
+		add:function(todo){
+			var arr = this.state.list.slice();
+			arr.push(todo);
+			this.setState({ 
+				list:arr
+			});
+		},
+		remove:function(item){
+			var arr = this.state.list.slice();
+			var index = arr.findIndex(function(value,index,arr){
+				return value.title===item.title;
+			});
+			arr.splice(index,1);
+			this.setState({
+				list:arr
+			});
+		},
+		changeStatus:function(updateItem){
+			var arr = this.state.list.slice();
+			var item = arr.find(function(value,index,arr){
+				return updateItem.title === value.title;
+			});
+			item.finished = updateItem.finished;
+			this.setState({
+				list:arr
+			});
+		},
+		
+		render:function(){
+			return (
+				<div>
+					<h3>Todo App</h3>
+					<TodoHeader thAdd={this.add} ></TodoHeader>
+					<TodoList onStatusChange={this.changeStatus}  tLremove={this.remove} list={this.state.list}></TodoList>
+					<TodoBtn></TodoBtn>
+				</div>
+			);
+		}
+	});
+	ReactDOM.render(
+		<App></App>,
+		document.getElementById("xianshi")
+	);
+	</script>
+</body>
+    
+
+
+
+</html>
